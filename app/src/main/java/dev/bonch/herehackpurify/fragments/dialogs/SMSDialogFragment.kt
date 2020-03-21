@@ -1,4 +1,4 @@
-package dev.bonch.herehackpurify.fragments
+package dev.bonch.herehackpurify.fragments.dialogs
 
 import android.app.Dialog
 import android.content.Intent

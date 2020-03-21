@@ -9,7 +9,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import dev.bonch.herehackpurify.R
-import dev.bonch.herehackpurify.fragments.SMSDialogFragment
+import dev.bonch.herehackpurify.fragments.dialogs.SMSDialogFragment
 
 class SplashActivity : AppCompatActivity() {
 
@@ -76,7 +76,8 @@ class SplashActivity : AppCompatActivity() {
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            val dialogFragment = SMSDialogFragment()
+            val dialogFragment =
+                SMSDialogFragment()
             dialogFragment.show(fragmentTransaction, "reset_pass")
 
         }
