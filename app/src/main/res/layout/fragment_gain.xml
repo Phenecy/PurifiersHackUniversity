@@ -14,10 +14,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:src="@drawable/ic_gain"
             android:id="@+id/imageView2"
-            android:layout_width="101dp"
-            android:layout_height="210dp"
-            android:background="@android:color/black"
+            android:layout_width="160dp"
+            android:layout_height="201dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -25,6 +25,7 @@
         <TextView
             android:layout_width="362dp"
             android:layout_height="113dp"
+            android:layout_marginTop="46dp"
             android:fontFamily="@font/gilroy_bold"
             android:text="Зарабатывайте очки на то, о чем давно мечтали! Делитесь успехами со всем сообществом!"
             android:textAlignment="center"

@@ -16,9 +16,9 @@
 
         <ImageView
             android:id="@+id/imageView2"
+            android:src="@drawable/ic_choose"
             android:layout_width="101dp"
             android:layout_height="210dp"
-            android:src="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
