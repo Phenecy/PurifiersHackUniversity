@@ -32,8 +32,20 @@ android {
     }
 }
 
-dependencies {
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 
+dependencies {
+    //HERE SDK
+    implementation(name:'HERE-sdk', ext:'aar')
+    //LOCATION TECH
+    implementation 'org.locationtech.jts:jts-core:1.15.0'
+    //GSON
+    implementation 'com.google.code.gson:gson:2.8.0'
+    //ANDROID
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'

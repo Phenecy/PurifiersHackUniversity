@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dev.bonch.herehackpurify">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +22,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.here.android.maps.appid"
+            android:value="FWal7dsfMKCaPtG3fDip" />
+        <meta-data
+            android:name="com.here.android.maps.apptoken"
+            android:value="_fN0yNCa3sqxSuvzNGFiwA" />
+        <meta-data
+            android:name="com.here.android.maps.license.key"
+            android:value="NYdJsxdaMS/FTUihZDe1sdmAa0L2mJiCEqvqwtBMwmdM7irc/BCwXq0WHUYrlFBaTTNJy/j9BEOPe07F/V9hkuMgYie65XydF8lW36PUPR9SqfaxzZ7OlvGc+QR81MsWk94ca/aYqKswLypRLAagflO+TFFFkc+nvM6U047fe3tnhYiSYA+7SVDBCXH96ahNXmkdm4sGnon4LGoZFlW59dSiRviTRcC5AY7S+OeADe/XY1vI4ZrC8wEEr03Wy+yaYTKuLrKozgpcelbtny56gsE5zMxlVdl23/pCCdk0RRyN1lRP8YPM1oih+6hgbNBq8d+Hoe/Ax5PqleYHIHU7qYps3Ct6cddIIWXB/HL7nvao3fSNKWYPn6MXtrpnYekfYync0Tb8JADmL/kEo1/NdYFvvtQ+mUDrkRuKmTSfGREOfRAA+V438l1x+kK0U/S4+gcsrn1vGvwxn6vLA67HvSjAHw5WHIOr6YGBryPyPSeGAnuO5+sYjtFY54GZ6YFRRUbvhGIbuVARFeSWYky/EQ6IWLjnfbbNlhK9wyXId+v6IwJR1w6h+VB+B+mR0vf6qQ3hQ2GCsyg9bcA4999kzTgR5OmY7KC43UEfH7ZMMpwEBewjbwUuaYXhIeSsXC2Xebiq01GghYtRWmKG8e2BypR7oEibtbZ/VJwIYAAfUUU=" />
+
+        <service
+            android:name="com.here.android.mpa.service.MapService"
+            android:exported="false"
+            android:label="PurifyLabel">
+            <intent-filter>
+                <action android:name="PurifyIntent"></action>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
