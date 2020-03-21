@@ -11,7 +11,6 @@
         android:outlineAmbientShadowColor="@android:color/black"
         android:outlineSpotShadowColor="@android:color/black"
         app:cardCornerRadius="32dp"
-        android:translationZ="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +34,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
+                android:paddingEnd="24dp"
                 android:id="@+id/sms_code_et"
                 android:layout_width="220dp"
                 android:layout_height="70dp"
@@ -56,7 +56,8 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/sms_send_btn"
+                android:clickable="true"
+                android:id="@+id/code_send_btn"
                 android:layout_width="220dp"
                 android:layout_height="70dp"
                 android:layout_marginBottom="16dp"
