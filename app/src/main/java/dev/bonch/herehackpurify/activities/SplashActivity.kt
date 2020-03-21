@@ -1,17 +1,15 @@
-package dev.bonch.herehackpurify
+package dev.bonch.herehackpurify.activities
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.os.HandlerCompat.postDelayed
-import kotlinx.android.synthetic.main.auth_afterload.*
+import dev.bonch.herehackpurify.R
+import dev.bonch.herehackpurify.fragments.SMSDialogFragment
 
 class SplashActivity : AppCompatActivity() {
 
@@ -21,8 +19,8 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var splashLayout: ConstraintLayout
 
     //Auth views
-    private lateinit var phoneEditText: EditText
-    private lateinit var smsSendButton: Button
+    private lateinit var ePhone: EditText
+    private lateinit var bSendSms: Button
 
     private val SPLASH_DURATION = 500
 
@@ -68,7 +66,19 @@ class SplashActivity : AppCompatActivity() {
 //        }
         setContentView(R.layout.auth_afterload)
 
-        phoneEditText = findViewById(R.id.phone_number_et)
-        smsSendButton = findViewById(R.id.sms_send_btn)
+        ePhone = findViewById(R.id.phone_number_et)
+        bSendSms = findViewById(R.id.sms_send_btn)
+
+        bSendSms.setOnClickListener {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("sms_code")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            val dialogFragment = SMSDialogFragment()
+            dialogFragment.show(fragmentTransaction, "reset_pass")
+
+        }
     }
 }

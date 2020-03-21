@@ -1,4 +1,4 @@
-package dev.bonch.herehackpurify
+package dev.bonch.herehackpurify.activities
 
 import android.Manifest
 import android.content.Context
