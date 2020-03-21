@@ -23,7 +23,7 @@ class TutorialActivity : AppCompatActivity() {
 
         initViews()
         setViewPagerAdapter()
-        animateViewPager()
+//        animateViewPager()
 
         tabLayout.setupWithViewPager(viewPager, true)
         bContinue.setOnClickListener {
@@ -31,17 +31,17 @@ class TutorialActivity : AppCompatActivity() {
         }
     }
 
-    fun animateViewPager() {
-        CoroutineScope(Dispatchers.Main).launch {
-            while (true) {
-                for (i in 0..2) {
-                    delay(3000)
-                    viewPager.currentItem = i
-                }
-            }
-
-        }
-    }
+//    fun animateViewPager() {
+//        CoroutineScope(Dispatchers.Main).launch {
+//            while (true) {
+//                for (i in 0..2) {
+//                    delay(3000)
+//                    viewPager.currentItem = i
+//                }
+//            }
+//
+//        }
+//    }
 
     fun setViewPagerAdapter() {
         val adapter = initPagerAdapter()
