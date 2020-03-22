@@ -87,7 +87,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/gilroy_bold"
-                        android:text="Дальневосточный пр. 71, к3"
+                        android:text="Выберите точку на карте"
                         android:textColor="#F6F1F6"
                         android:textSize="24dp"
                         app:layout_constraintBottom_toBottomOf="parent"
