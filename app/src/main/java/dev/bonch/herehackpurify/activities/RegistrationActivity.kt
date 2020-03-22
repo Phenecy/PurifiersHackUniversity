@@ -32,7 +32,7 @@ class RegistrationActivity : AppCompatActivity() {
             user_phone_et.text.toString(),
             user_phone_et.text.toString(),
             phone,
-            birthday_et.text.toString().toInt()
+            floor_et.text.toString().toInt()
         )
         TestRep.createClient(this, client)
     }
