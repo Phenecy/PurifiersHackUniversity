@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PointF
 import android.graphics.Rect
@@ -25,6 +26,7 @@ import com.here.android.mpa.mapping.*
 import com.here.android.mpa.mapping.Map
 import com.here.android.mpa.mapping.Map.OnTransformListener
 import com.here.android.mpa.search.ErrorCode
+import com.here.android.mpa.search.Location
 import com.here.android.mpa.search.ReverseGeocodeRequest
 import com.here.android.positioning.StatusListener
 import com.here.android.positioning.StatusListener.ServiceError
@@ -59,6 +61,8 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
 
     private var isFirst = true
 
+    private lateinit var location: GeoCoordinate;
+
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +79,12 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                     RUNTIME_PERMISSIONS,
                     REQUEST_CODE_ASK_PERMISSIONS
                 )
+        }
+
+        createPointButton.setOnClickListener {
+            var intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("data", location.toString())
+            startActivity(intent)
         }
         //setLocationMethod()
 
@@ -499,6 +509,7 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                              * Please refer to HERE Android SDK doc for other supported APIs.
                              */
                 // (location.getAddress().toString())
+                location = p0.coordinate
                 adress_tv.text = p0.address.street +" " + p0.address.houseNumber
             } else {
                 adress_tv.text = "ERROR:RevGeocode Request returned error code:$p1"

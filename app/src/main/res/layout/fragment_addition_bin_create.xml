@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/gilroy_bold"
+        android:text="Создание точки"
+        android:textColor="@color/cloud_main_color"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/gilroy_bold"
+        android:text="укажите адрес на карте"
+        android:textColor="#2E2C2C"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="20dp"
+        android:outlineAmbientShadowColor="@android:color/black"
+        android:outlineSpotShadowColor="@android:color/black"
+        android:translationZ="15dp"
+        app:cardCornerRadius="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_clouds">
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="32dp"
+                android:fontFamily="@font/gilroy_bold"
+                android:text="Ещё пара красивых слов..."
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/additional_info_et"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_edit_text"
+                android:ems="10"
+                android:fontFamily="@font/gilroy_regular"
+                android:hint="Доп. информация"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textColor="#2E2C2C"
+                android:textColorHint="#C0C0C0"
+                android:textSize="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/floor_et" />
+
+            <EditText
+                android:id="@+id/floor_et"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_edit_text"
+                android:ems="10"
+                android:fontFamily="@font/gilroy_regular"
+                android:hint="Этаж"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textColor="#2E2C2C"
+                android:textColorHint="#C0C0C0"
+                android:textSize="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/apartment_et"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <EditText
+                android:id="@+id/apartment_et"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_edit_text"
+                android:ems="10"
+                android:fontFamily="@font/gilroy_regular"
+                android:hint="Кв."
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textColor="#2E2C2C"
+                android:textColorHint="#C0C0C0"
+                android:textSize="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/floor_et"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_clouds_btn"
+        android:fontFamily="@font/gilroy_bold"
+        android:paddingStart="35dp"
+        android:text="Создать точку"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
