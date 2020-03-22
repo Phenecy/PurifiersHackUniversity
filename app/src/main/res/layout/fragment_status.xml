@@ -75,12 +75,13 @@
         app:layout_constraintTop_toBottomOf="@+id/pointAddress">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/binLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#F6F1F6">
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/binImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -90,6 +91,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/binTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
