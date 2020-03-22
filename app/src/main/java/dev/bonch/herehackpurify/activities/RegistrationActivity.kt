@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import dev.bonch.herehackpurify.Main
 import dev.bonch.herehackpurify.R
 import dev.bonch.herehackpurify.model.pojo.Client
 import dev.bonch.herehackpurify.model.repository.TestRep
@@ -35,6 +36,7 @@ class RegistrationActivity : AppCompatActivity() {
             floor_et.text.toString().toInt()
         )
         TestRep.createClient(this, client)
+        Main.client = client
     }
 
     fun regSuccess(){

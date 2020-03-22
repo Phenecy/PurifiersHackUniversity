@@ -10,9 +10,29 @@
         android:name="dev.bonch.herehackpurify.fragments.nav.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" >
-<!--        <action-->
-<!--            android:id="@+id/action_nav_home_to_nav_fragment_chair"-->
-<!--            app:destination="@id/nav_fragment_chair" />-->
+        <action
+            android:id="@+id/action_nav_home_to_binCreateFragment"
+            app:destination="@id/binCreateFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_statusFragment"
+            app:destination="@id/statusFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/locationActivity"
+        android:name="dev.bonch.herehackpurify.activities.LocationActivity"
+        android:label="activity_location"
+        tools:layout="@layout/activity_location" />
+    <fragment
+        android:id="@+id/binCreateFragment"
+        android:name="dev.bonch.herehackpurify.fragments.BinCreateFragment"
+        android:label="BinCreateFragment" >
+        <action
+            android:id="@+id/action_binCreateFragment_to_locationActivity"
+            app:destination="@id/locationActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="dev.bonch.herehackpurify.fragments.StatusFragment"
+        android:label="StatusFragment" />
 
 </navigation>

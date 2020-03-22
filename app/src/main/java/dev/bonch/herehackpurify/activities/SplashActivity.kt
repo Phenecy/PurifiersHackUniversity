@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import dev.bonch.herehackpurify.Main
 import dev.bonch.herehackpurify.R
 import dev.bonch.herehackpurify.fragments.dialogs.SMSDialogFragment
 import dev.bonch.herehackpurify.model.pojo.Client
@@ -90,6 +91,7 @@ class SplashActivity : AppCompatActivity() {
 
     fun isClientReg(client: Client) {
         if (client.id != 0) {
+            Main.client = client
             intent = Intent(this@SplashActivity, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             startActivity(intent)
