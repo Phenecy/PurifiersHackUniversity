@@ -3,9 +3,10 @@
         <shape
             android:innerRadius="0dp"
             android:shape="ring"
-            android:thickness="10dp"
+            android:thickness="8dp"
             android:useLevel="false">
             <solid android:color="#0055F9" />
         </shape>
+        <transition android:paddingBottom="100dp"/>
     </item>
 </layer-list>

@@ -1,5 +1,6 @@
 package dev.bonch.herehackpurify.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -23,25 +24,28 @@ class TutorialActivity : AppCompatActivity() {
 
         initViews()
         setViewPagerAdapter()
-        animateViewPager()
+//        animateViewPager()
 
         tabLayout.setupWithViewPager(viewPager, true)
         bContinue.setOnClickListener {
-
+            val intent = Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
         }
     }
 
-    fun animateViewPager() {
-        CoroutineScope(Dispatchers.Main).launch {
-            while (true) {
-                for (i in 0..2) {
-                    delay(3000)
-                    viewPager.currentItem = i
-                }
-            }
-
-        }
-    }
+//    fun animateViewPager() {
+//        CoroutineScope(Dispatchers.Main).launch {
+//            while (true) {
+//                for (i in 0..2) {
+//                    delay(3000)
+//                    viewPager.currentItem = i
+//                }
+//            }
+//
+//        }
+//    }
 
     fun setViewPagerAdapter() {
         val adapter = initPagerAdapter()
