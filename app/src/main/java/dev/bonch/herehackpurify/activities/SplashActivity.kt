@@ -90,7 +90,7 @@ class SplashActivity : AppCompatActivity() {
 
     fun isClientReg(client: Client) {
         if (client.id != 0) {
-            intent = Intent(this@SplashActivity, MainActivity::class.java)
+            intent = Intent(this@SplashActivity, LocationActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             startActivity(intent)
             finish()

@@ -28,7 +28,7 @@ class TutorialActivity : AppCompatActivity() {
 
         tabLayout.setupWithViewPager(viewPager, true)
         bContinue.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, MapActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
