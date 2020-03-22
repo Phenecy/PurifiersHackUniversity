@@ -1,9 +1,7 @@
 package dev.bonch.herehackpurify.activities
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PointF
@@ -11,27 +9,25 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.here.android.mpa.common.*
-import com.here.android.mpa.common.LocationDataSourceHERE.IndoorPositioningMode
-import com.here.android.mpa.common.LocationDataSourceHERE.IndoorPositioningModeSetResult
 import com.here.android.mpa.common.PositioningManager.*
+import com.here.android.mpa.guidance.TrafficUpdater
 import com.here.android.mpa.mapping.*
 import com.here.android.mpa.mapping.Map
 import com.here.android.mpa.mapping.Map.OnTransformListener
+import com.here.android.mpa.routing.*
 import com.here.android.mpa.search.ErrorCode
-import com.here.android.mpa.search.Location
 import com.here.android.mpa.search.ReverseGeocodeRequest
 import com.here.android.positioning.StatusListener
 import com.here.android.positioning.StatusListener.ServiceError
+import dev.bonch.herehackpurify.Main
 import dev.bonch.herehackpurify.R
-import kotlinx.android.synthetic.main.activity_maps.*
+import dev.bonch.herehackpurify.model.pojo.Bin
+import dev.bonch.herehackpurify.model.pojo.Point
 import kotlinx.android.synthetic.main.fragment_map_bin_create.*
 import java.io.File
 import java.lang.ref.WeakReference
@@ -63,6 +59,10 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
 
     private lateinit var location: GeoCoordinate;
 
+    lateinit var marker1: MapMarker
+    lateinit var marker: MapMarker
+    lateinit var marker2: MapMarker
+
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,104 +81,60 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                 )
         }
 
-        createPointButton.setOnClickListener {
-            var intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("data", location.toString())
-            startActivity(intent)
-        }
-        //setLocationMethod()
+        initActivity()
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (mPositioningManager != null) {
-            mPositioningManager!!.stop()
-        }
-    }
+    private fun initActivity(){
+        if (Main.isSecond) {
+            titleCreate.text = "Выберите мусорку"
 
-    override fun onResume() {
-        super.onResume()
-        if (mPositioningManager != null) {
-            mPositioningManager!!.start(LocationMethod.GPS_NETWORK_INDOOR)
-        }
-    }
-
-    override fun onPositionUpdated(
-        locationMethod: LocationMethod,
-        geoPosition: GeoPosition,
-        mapMatched: Boolean
-    ) {
-        val coordinate = geoPosition.coordinate
-        if (mTransforming) {
-            mPendingUpdate =
-                Runnable { onPositionUpdated(locationMethod, geoPosition, mapMatched) }
+            createPointButton.setOnClickListener {
+                Main.bin = Bin(false, location.latitude, location.longitude)
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("data", location.toString())
+                Main.isSetPoint = true
+                startActivity(intent)
+            }
         } else {
-            if (isFirst) {
-                map!!.setCenter(coordinate, Map.Animation.BOW)
-                updateLocationInfo(locationMethod, geoPosition)
-                isFirst = false
+            titleCreate.text = "Выберите точку сбора"
+            createPointButton.setOnClickListener {
+                Main.point = Point(location.latitude, location.longitude, 1, 1)
+                val intent = Intent(this, LocationActivity::class.java)
+                Main.isSecond = true
+                startActivity(intent)
             }
-
         }
     }
 
-    override fun onPositionFixChanged(
-        locationMethod: LocationMethod,
-        locationStatus: LocationStatus
-    ) { // ignored
-    }
-
-    override fun onMapTransformStart() {
-        mTransforming = true
-    }
-
-    override fun onMapTransformEnd(mapState: MapState) {
-        mTransforming = false
-        if (mPendingUpdate != null) {
-            mPendingUpdate!!.run()
-            mPendingUpdate = null
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_CODE_ASK_PERMISSIONS -> {
-                var index = 0
-                while (index < permissions.size) {
-                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) { /*
-                         * If the user turned down the permission request in the past and chose the
-                         * Don't ask again option in the permission request system dialog.
-                         */
-                        if (!ActivityCompat
-                                .shouldShowRequestPermissionRationale(this, permissions[index])
-                        ) {
-                            Toast.makeText(
-                                this, "Required permission " + permissions[index]
-                                        + " not granted. "
-                                        + "Please go to settings and turn on for sample app",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else {
-                            Toast.makeText(
-                                this, "Required permission " + permissions[index]
-                                        + " not granted", Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                    index++
-                }
-                initializeMapsAndPositioning()
+    private fun triggerRevGeocodeRequest(coordinate: GeoCoordinate) {
+        val revGecodeRequest = ReverseGeocodeRequest(coordinate)
+        revGecodeRequest.locale = Locale("ru", "RU")
+        revGecodeRequest.execute { p0, p1 ->
+            if (p1 === ErrorCode.NONE) { /*
+                             * From the location object, we retrieve the address and display to the screen.
+                             * Please refer to HERE Android SDK doc for other supported APIs.
+                             */
+                // (location.getAddress().toString())
+                location = p0.coordinate
+                Main.pointAddressText = p0.address.street + " " + p0.address.houseNumber
+                adress_tv.text = p0.address.street + " " + p0.address.houseNumber
+            } else {
+                adress_tv.text = "ERROR:RevGeocode Request returned error code:$p1"
             }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 
-    private fun getMapFragment(): AndroidXMapFragment? {
-        return supportFragmentManager.findFragmentById(R.id.mapfragment) as AndroidXMapFragment?
+    private fun markerToCenter() {
+        val myViewRect = Rect()
+        cardView3.getGlobalVisibleRect(myViewRect);
+        if (m_tap_marker == null) {
+            m_tap_marker = MapScreenMarker(
+                    PointF(myViewRect.exactCenterX(), myViewRect.exactCenterX()),
+                    m_marker_image
+            )
+            map!!.addMapObject(m_tap_marker)
+        }
     }
 
     /**
@@ -186,7 +142,6 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
      */
     private fun initializeMapsAndPositioning() {
         setContentView(R.layout.fragment_map_bin_create)
-//        mLocationInfo = findViewById<View>(R.id.titleText) as TextView
         mapFragment = getMapFragment()
         mapFragment!!.retainInstance = false
         // Set path of disk cache
@@ -219,17 +174,7 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         } else {
             mapFragment!!.init { error ->
                 if (error == OnEngineInitListener.Error.NONE) {
-                    map = mapFragment!!.map
-                    (map as Map).setCenter(
-                        GeoCoordinate(
-                            59.938537,
-                            30.295882,
-                            0.0
-                        ), Map.Animation.NONE
-                    )
-                    m_marker_image = Image()
-                    (m_marker_image as Image).setImageResource(R.mipmap.ic_launcher_background)
-                    markerToCenter()
+                    initMap()
                     (map as Map).setZoomLevel((map as Map).getMaxZoomLevel() - 1)
                     (map as Map).addTransformListener(this@LocationActivity)
                     mPositioningManager = getInstance()
@@ -282,6 +227,7 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                             this@LocationActivity
                         )
                     )
+
                     // start position updates, accepting GPS, network or indoor positions
                     if ((mPositioningManager as PositioningManager).start(LocationMethod.GPS_NETWORK_INDOOR)) {
                         mapFragment!!.positionIndicator.isVisible = true
@@ -304,23 +250,42 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                             override fun onMultiFingerManipulationStart() {}
                             override fun onMultiFingerManipulationEnd() {}
                             override fun onMapObjectsSelected(list: List<ViewObject>): Boolean {
+                                list.forEach {
+                                    if (it.getBaseType() == ViewObject.Type.USER_OBJECT) {
+                                        if ((it as MapObject).getType() == MapObject.Type.MARKER) {
+                                            // At this point we have the originally added
+                                            // map marker, so we can do something with it
+                                            // (like change the visibility, or more
+                                            // marker-specific actions)
+                                            if(list.indexOf(it) == 0){
+                                                marker.icon.setImageResource(R.drawable.ic_curr_point)
+                                                marker1.icon.setImageResource(R.drawable.ic_point)
+                                                marker2.icon.setImageResource(R.drawable.ic_point)
+                                                Main.bin = Bin(false, marker.coordinate.latitude, marker.coordinate.longitude)
+                                                binCoordinateToText(marker)
+                                            }
+                                            if(list.indexOf(it) == 1){
+                                                marker.icon.setImageResource(R.drawable.ic_point)
+                                                marker1.icon.setImageResource(R.drawable.ic_curr_point)
+                                                marker2.icon.setImageResource(R.drawable.ic_point)
+                                                Main.bin = Bin(false, marker1.coordinate.latitude, marker1.coordinate.longitude)
+                                                binCoordinateToText(marker1)
+                                            }
+                                            if(list.indexOf(it) == 2){
+                                                marker.icon.setImageResource(R.drawable.ic_point)
+                                                marker1.icon.setImageResource(R.drawable.ic_point)
+                                                marker2.icon.setImageResource(R.drawable.ic_curr_point)
+                                                Main.bin = Bin(false, marker2.coordinate.latitude, marker2.coordinate.longitude)
+                                                binCoordinateToText(marker2)
+                                            }
+
+                                        }
+                                    }
+                                }
                                 return false
                             }
 
                             override fun onTapEvent(pointF: PointF): Boolean { /* show toast message for onPanEnd gesture callback */
-                                /*
-                                         * add map screen marker at coordinates of gesture. if map
-                                         * screen marker already exists, change to new coordinate
-                                         */
-
-//                                if (m_tap_marker == null) {
-//                                    m_tap_marker = MapMarker(map.center, m_marker_image)
-//                                    map.addMapObject(m_tap_marker)
-//                                } else {
-//                                    (m_tap_marker as MapMarker).coordinate = map.center
-//                                }
-
-                                triggerRevGeocodeRequest((map as Map).center)
                                 return false
                             }
 
@@ -354,11 +319,144 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                                 return false
                             }
                         }, 0, false)
-                } else {
                 }
             }
         }
     }
+
+    private fun initMap(){
+        map = mapFragment!!.map
+        (map as Map).setCenter(
+                GeoCoordinate(
+                        59.938537,
+                        30.295882,
+                        0.0
+                ), Map.Animation.NONE
+        )
+        m_marker_image = Image()
+        (m_marker_image as Image).setImageResource(R.drawable.ic_point)
+        if (Main.isSecond) {
+           marker = MapMarker(GeoCoordinate(59.88024,30.47563), m_marker_image)
+           marker1 = MapMarker(GeoCoordinate(59.8787, 30.47689), m_marker_image)
+           marker2 = MapMarker(GeoCoordinate(59.88149, 30.47865), m_marker_image)
+            createBinMarkers()
+        } else {
+            markerToCenter()
+        }
+    }
+
+    private fun binCoordinateToText(mark: MapMarker) {
+        val revGecodeRequest = ReverseGeocodeRequest(mark.coordinate)
+        revGecodeRequest.locale = Locale("ru", "RU")
+        revGecodeRequest.execute { p0, p1 ->
+            if (p1 === ErrorCode.NONE) {
+                location = p0.coordinate
+                Main.binAddressText = p0.address.street + " " + p0.address.houseNumber
+                adress_tv.text = p0.address.street + " " + p0.address.houseNumber                                                    }
+        }
+    }
+
+    private fun createBinMarkers() {
+        map!!.addMapObject(marker)
+        map!!.addMapObject(marker1)
+        map!!.addMapObject(marker2)
+
+    }
+
+    override fun onPositionUpdated(
+            locationMethod: LocationMethod,
+            geoPosition: GeoPosition,
+            mapMatched: Boolean
+    ) {
+        if(!Main.isSecond) triggerRevGeocodeRequest((map as Map).center)
+
+        val coordinate = geoPosition.coordinate
+        if (mTransforming) {
+            mPendingUpdate =
+                    Runnable { onPositionUpdated(locationMethod, geoPosition, mapMatched) }
+        } else {
+            if (isFirst) {
+                map!!.setCenter(coordinate, Map.Animation.BOW)
+                updateLocationInfo(locationMethod, geoPosition)
+                isFirst = false
+            }
+
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (mPositioningManager != null) {
+            mPositioningManager!!.stop()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mPositioningManager != null) {
+            mPositioningManager!!.start(LocationMethod.GPS_NETWORK_INDOOR)
+        }
+    }
+
+
+    override fun onPositionFixChanged(
+            locationMethod: LocationMethod,
+            locationStatus: LocationStatus
+    ) { // ignored
+    }
+
+    override fun onMapTransformStart() {
+        mTransforming = true
+    }
+
+    override fun onMapTransformEnd(mapState: MapState) {
+        mTransforming = false
+        if (mPendingUpdate != null) {
+            mPendingUpdate!!.run()
+            mPendingUpdate = null
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int, permissions: Array<String>,
+            grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_ASK_PERMISSIONS -> {
+                var index = 0
+                while (index < permissions.size) {
+                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) { /*
+                         * If the user turned down the permission request in the past and chose the
+                         * Don't ask again option in the permission request system dialog.
+                         */
+                        if (!ActivityCompat
+                                        .shouldShowRequestPermissionRationale(this, permissions[index])
+                        ) {
+                            Toast.makeText(
+                                    this, "Required permission " + permissions[index]
+                                    + " not granted. "
+                                    + "Please go to settings and turn on for sample app",
+                                    Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                    this, "Required permission " + permissions[index]
+                                    + " not granted", Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    index++
+                }
+                initializeMapsAndPositioning()
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun getMapFragment(): AndroidXMapFragment? {
+        return supportFragmentManager.findFragmentById(R.id.mapfragment) as AndroidXMapFragment?
+    }
+
 
     /**
      * Update location information.
@@ -371,13 +469,14 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
 //        if (mLocationInfo == null) {
 //            return
 //        }
+
         val sb = StringBuffer()
         val coord = geoPosition.coordinate
         sb.append("Type: ")
-            .append(String.format(Locale("ru","RU"), "%s\n", locationMethod.name))
+            .append(String.format(Locale("ru", "RU"), "%s\n", locationMethod.name))
         sb.append("Coordinate:").append(
             String.format(
-                Locale("ru","RU"),
+                Locale("ru", "RU"),
                 "%.6f, %.6f\n",
                 coord.latitude,
                 coord.longitude
@@ -420,51 +519,6 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         //mLocationInfo!!.text = sb.toString()
     }
 
-    /**
-     * Called when set location method -menu item is selected.
-     */
-//    private fun setLocationMethod() {
-//        val builder = AlertDialog.Builder(this)
-//        val names =
-//            resources.getStringArray(R.array.locationMethodNames)
-//        builder.setTitle(R.string.title_select_location_method)
-//            .setItems(names, DialogInterface.OnClickListener { dialog, which ->
-//                try {
-//                    val values =
-//                        resources.getStringArray(R.array.locationMethodValues)
-//                    val method =
-//                        LocationMethod.valueOf(values[which])
-//                    setLocationMethod(method)
-//                } catch (ex: IllegalArgumentException) {
-//                    Toast.makeText(
-//                        this@BasicPositioningActivity, "setLocationMethod failed: "
-//                                + ex.message, Toast.LENGTH_LONG
-//                    ).show()
-//                } finally {
-//                    dialog.dismiss()
-//                }
-//            })
-//        builder.create().show()
-//    }
-
-    /**
-     * Called when set indoor mode -menu item is selected.
-     */
-
-    /**
-     * Sets location method for the PositioningManager.
-     * @param method New location method.
-     */
-    private fun setLocationMethod(method: LocationMethod) {
-        if (!mPositioningManager!!.start(method)) {
-            Toast.makeText(
-                this@LocationActivity,
-                "PositioningManager.start($method): failed",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
     companion object {
         // permissions request code
         private const val REQUEST_CODE_ASK_PERMISSIONS = 1
@@ -497,44 +551,77 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         }
     }
 
-    private fun triggerRevGeocodeRequest(coordinate: GeoCoordinate) {
-        //m_resultTextView.setText("")
-        /* Create a ReverseGeocodeRequest object with a GeoCoordinate. */
-        //val coordinate = GeoCoordinate(49.25914, -123.00777)
-        val revGecodeRequest = ReverseGeocodeRequest(coordinate)
-        revGecodeRequest.locale = Locale("ru","RU")
-        revGecodeRequest.execute { p0, p1 ->
-            if (p1 === ErrorCode.NONE) { /*
-                             * From the location object, we retrieve the address and display to the screen.
-                             * Please refer to HERE Android SDK doc for other supported APIs.
-                             */
-                // (location.getAddress().toString())
-                location = p0.coordinate
-                adress_tv.text = p0.address.street +" " + p0.address.houseNumber
-            } else {
-                adress_tv.text = "ERROR:RevGeocode Request returned error code:$p1"
-                //updateTextView("ERROR:RevGeocode Request returned error code:$errorCode")
-            }
-        }
-    }
+    private lateinit var m_route: Route
+    private lateinit var m_requestInfo: TrafficUpdater.RequestInfo
+    private lateinit var m_coreRouter: CoreRouter
+    private lateinit var m_mapRoute: MapRoute
 
-    private fun markerToCenter() {
-        val myViewRect = Rect();
-        cardView3.getGlobalVisibleRect(myViewRect);
-        val x = myViewRect.left;
-        val y = myViewRect.top;
-        val mWidth: Float =
-            resources.displayMetrics.widthPixels.toFloat()
-        val mHeight: Float =
-            resources.displayMetrics.heightPixels.toFloat()
-        if (m_tap_marker == null) {
-            m_tap_marker = MapScreenMarker(
-                PointF(myViewRect.exactCenterX(), myViewRect.exactCenterX() - 180),
-                m_marker_image
-            )
-            map!!.addMapObject(m_tap_marker)
-        } else {
-            //(m_tap_marker as MapScreenMarker).screenCoordinate =
-        }
-    }
+
+
+//    private fun calculateTta() { /*
+//         * Receive arrival time for the whole m_route, if you want to get time only for part of
+//         * m_route pass parameter in bounds 0 <= m_route.getSublegCount()
+//         */
+//        val ttaExcluding: RouteTta = m_route.getTtaExcludingTraffic(Route.WHOLE_ROUTE)
+//        val ttaIncluding: RouteTta = m_route.getTtaIncludingTraffic(Route.WHOLE_ROUTE)
+//        val tvInclude: TextView = findViewById(android.R.id.tvTtaInclude)
+//        tvInclude.text = "Tta included: " + ttaIncluding.duration.toString()
+//        val tvExclude: TextView = findViewById(android.R.id.tvTtaExclude)
+//        tvExclude.text = "Tta excluded: " + ttaExcluding.duration.toString()
+//    }
+//
+//    private fun calculateTtaUsingDownloadedTraffic() { /* Turn on traffic updates */
+//        TrafficUpdater.getInstance().enableUpdate(true)
+//        m_requestInfo = TrafficUpdater.getInstance().request(
+//                m_route, TrafficUpdater.Listener {
+//            val ttaDownloaded: RouteTta = m_route.getTtaUsingDownloadedTraffic(
+//                    Route.WHOLE_ROUTE
+//            )
+//            UiThreadStatement.runOnUiThread(Runnable {
+//                val tvDownload: TextView = findViewById(android.R.id.tvTtaDowload)
+//                if (tvDownload != null) {
+//                    tvDownload.text = "Tta downloaded: " + ttaDownloaded.duration.toString()
+//                }
+//            })
+//        })
+//    }
+//
+//    private fun calculateRoute() { /* Initialize a CoreRouter */
+//        m_coreRouter = CoreRouter()
+//        /* For calculating traffic on the m_route */
+//        val dynamicPenalty = DynamicPenalty()
+//        dynamicPenalty.trafficPenaltyMode = Route.TrafficPenaltyMode.OPTIMAL
+//        m_coreRouter.setDynamicPenalty(dynamicPenalty)
+//        val routePlan: RoutePlan = RouteUtil.createRoute()
+//        m_coreRouter.calculateRoute(routePlan,
+//                object : RouteUtil.RouteListener<List<RouteResult?>?, RoutingError?>() {
+//                    override fun onCalculateRouteFinished(
+//                            routeResults: List<RouteResult?>?,
+//                            routingError: RoutingError?
+//                    ) { /* Calculation is done. Let's handle the result */
+//                        if (routingError == RoutingError.NONE) { /* Get route fro results */
+//                            m_route = routeResults!![0]!!.route
+//                            /* check if map route is already on map and if it is,
+//                                        delete it.
+//                                     */if (m_mapRoute != null) {
+//                                map!!.removeMapObject(m_mapRoute)
+//                            }
+//                            /* Create a MapRoute so that it can be placed on the map */m_mapRoute =
+//                                    MapRoute(routeResults[0].route)
+//                            /* Add the MapRoute to the map */map!!.addMapObject(m_mapRoute)
+//                            /*
+//                                     * We may also want to make sure the map view is orientated properly so
+//                                     * the entire route can be easily seen.
+//                                     */map!!.zoomTo(
+//                                    m_route.getBoundingBox(),
+//                                    Map.Animation.NONE,
+//                                    15f
+//                            )
+//                            /* Get TTA */calculateTta()
+//                            calculateTtaUsingDownloadedTraffic()
+//                        }
+//                    }
+//
+//                })
+//    }
 }

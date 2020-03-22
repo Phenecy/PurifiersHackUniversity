@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.here.android.mpa.guidance.NavigationManager
+import dev.bonch.herehackpurify.Main
 import dev.bonch.herehackpurify.R
 import dev.bonch.herehackpurify.activities.LocationActivity
-import dev.bonch.herehackpurify.activities.RegistrationActivity
+import dev.bonch.herehackpurify.activities.OrderTakeActivity
 import kotlinx.android.synthetic.main.auth_afterload.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -27,7 +27,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cardView1.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_home_to_binCreateFragment)
+            if(Main.isSetPoint)
+            {
+                findNavController().navigate(R.id.action_nav_home_to_statusFragment)
+            }
+            else {
+                findNavController().navigate(R.id.action_nav_home_to_binCreateFragment)
+            }
+        }
+        cleanerCV.setOnClickListener{
+            var intent = Intent(context, OrderTakeActivity::class.java)
+            startActivity(intent)
         }
     }
 }

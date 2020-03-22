@@ -22,7 +22,9 @@ import com.here.android.mpa.common.OnEngineInitListener
 import com.here.android.mpa.common.Version
 import com.here.android.mpa.mapping.AndroidXMapFragment
 import com.here.android.mpa.mapping.Map
+import dev.bonch.herehackpurify.Main
 import dev.bonch.herehackpurify.R
+import dev.bonch.herehackpurify.model.pojo.Point
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,11 +38,9 @@ class MainActivity : AppCompatActivity() {
         setupNavigationDrawer()
         if (intent.hasExtra("data")){
             location = intent.getStringExtra("data")!!
+            //Main.point = Point(location, 1, 1)
             navController.navigate(R.id.action_nav_home_to_statusFragment)
         }
-
-
-
 
 //        navController.currentDestination.label
     }
