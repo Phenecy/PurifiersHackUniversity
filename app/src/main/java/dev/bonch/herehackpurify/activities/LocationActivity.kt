@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.PointF
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,7 @@ import com.here.android.positioning.StatusListener
 import com.here.android.positioning.StatusListener.ServiceError
 import dev.bonch.herehackpurify.R
 import kotlinx.android.synthetic.main.activity_maps.*
+import kotlinx.android.synthetic.main.fragment_map_bin_create.*
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -102,7 +104,7 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
             mPendingUpdate =
                 Runnable { onPositionUpdated(locationMethod, geoPosition, mapMatched) }
         } else {
-            if(isFirst){
+            if (isFirst) {
                 map!!.setCenter(coordinate, Map.Animation.BOW)
                 updateLocationInfo(locationMethod, geoPosition)
                 isFirst = false
@@ -173,8 +175,8 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
      * Initializes HERE Maps and HERE Positioning. Called after permission check.
      */
     private fun initializeMapsAndPositioning() {
-        setContentView(R.layout.activity_maps)
-        mLocationInfo = findViewById<View>(R.id.titleText) as TextView
+        setContentView(R.layout.fragment_map_bin_create)
+//        mLocationInfo = findViewById<View>(R.id.titleText) as TextView
         mapFragment = getMapFragment()
         mapFragment!!.retainInstance = false
         // Set path of disk cache
@@ -342,7 +344,8 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
                                 return false
                             }
                         }, 0, false)
-                } else {}
+                } else {
+                }
             }
         }
     }
@@ -355,16 +358,16 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         locationMethod: LocationMethod,
         geoPosition: GeoPosition
     ) {
-        if (mLocationInfo == null) {
-            return
-        }
+//        if (mLocationInfo == null) {
+//            return
+//        }
         val sb = StringBuffer()
         val coord = geoPosition.coordinate
         sb.append("Type: ")
-            .append(String.format(Locale.US, "%s\n", locationMethod.name))
+            .append(String.format(Locale("ru","RU"), "%s\n", locationMethod.name))
         sb.append("Coordinate:").append(
             String.format(
-                Locale.US,
+                Locale("ru","RU"),
                 "%.6f, %.6f\n",
                 coord.latitude,
                 coord.longitude
@@ -489,28 +492,33 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         /* Create a ReverseGeocodeRequest object with a GeoCoordinate. */
         //val coordinate = GeoCoordinate(49.25914, -123.00777)
         val revGecodeRequest = ReverseGeocodeRequest(coordinate)
+        revGecodeRequest.locale = Locale("ru","RU")
         revGecodeRequest.execute { p0, p1 ->
             if (p1 === ErrorCode.NONE) { /*
                              * From the location object, we retrieve the address and display to the screen.
                              * Please refer to HERE Android SDK doc for other supported APIs.
                              */
                 // (location.getAddress().toString())
-                titleText.text = p0.address.toString()
+                adress_tv.text = p0.address.street +" " + p0.address.houseNumber
             } else {
-                titleText.text = "ERROR:RevGeocode Request returned error code:$p1"
+                adress_tv.text = "ERROR:RevGeocode Request returned error code:$p1"
                 //updateTextView("ERROR:RevGeocode Request returned error code:$errorCode")
             }
         }
     }
 
-    private fun markerToCenter(){
+    private fun markerToCenter() {
+        val myViewRect = Rect();
+        cardView3.getGlobalVisibleRect(myViewRect);
+        val x = myViewRect.left;
+        val y = myViewRect.top;
         val mWidth: Float =
             resources.displayMetrics.widthPixels.toFloat()
         val mHeight: Float =
             resources.displayMetrics.heightPixels.toFloat()
         if (m_tap_marker == null) {
             m_tap_marker = MapScreenMarker(
-                PointF(mWidth / 2, (mHeight / 2)-180),
+                PointF(myViewRect.exactCenterX(), myViewRect.exactCenterX() - 180),
                 m_marker_image
             )
             map!!.addMapObject(m_tap_marker)
