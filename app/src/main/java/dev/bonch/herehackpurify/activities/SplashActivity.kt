@@ -1,5 +1,6 @@
 package dev.bonch.herehackpurify.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
@@ -10,6 +11,10 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import dev.bonch.herehackpurify.R
 import dev.bonch.herehackpurify.fragments.dialogs.SMSDialogFragment
+import dev.bonch.herehackpurify.model.pojo.Client
+import dev.bonch.herehackpurify.model.repository.TestRep
+import kotlinx.android.synthetic.main.auth_afterload.*
+import kotlinx.android.synthetic.main.fragment_dialog_sms.*
 
 class SplashActivity : AppCompatActivity() {
 
@@ -58,15 +63,10 @@ class SplashActivity : AppCompatActivity() {
 
     //    private fun updateUI(user: User?)
     private fun updateUI() {
-//        if (user != null) {
-//            intent = Intent(this@SplashActivity, MainActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-//            startActivity(intent)
-//            finish()
-//        }
+
         setContentView(R.layout.auth_afterload)
 
-        ePhone = findViewById(R.id.user_name_et)
+        ePhone = findViewById(R.id.user_phone_et)
         bSendSms = findViewById(R.id.sms_send_btn)
 
         bSendSms.setOnClickListener {
@@ -79,7 +79,29 @@ class SplashActivity : AppCompatActivity() {
             val dialogFragment =
                 SMSDialogFragment()
             dialogFragment.show(fragmentTransaction, "reset_pass")
+            dialogFragment.setPhone(user_phone_et.text.toString())
+        }
 
+    }
+
+    fun authClient(phone: String) {
+        TestRep.getClientByPhone(this, phone)
+    }
+
+    fun isClientReg(client: Client) {
+        if (client.id != 0) {
+            intent = Intent(this@SplashActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            startActivity(intent)
+            finish()
+        }
+        else{
+            intent = Intent(this@SplashActivity, RegistrationActivity::class.java)
+            val bundle = Bundle().apply{putString("dev.bonch.herehackpurify.PHONE_KEY", user_phone_et.text.toString())}
+            intent.putExtras(bundle)
+            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            startActivity(intent)
+            finish()
         }
     }
 }

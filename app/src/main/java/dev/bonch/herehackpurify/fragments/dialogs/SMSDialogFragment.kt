@@ -13,11 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import dev.bonch.herehackpurify.R
 import dev.bonch.herehackpurify.activities.RegistrationActivity
+import dev.bonch.herehackpurify.activities.SplashActivity
+import kotlinx.android.synthetic.main.auth_afterload.*
 
 class SMSDialogFragment : DialogFragment() {
 
     private lateinit var eSmsCode: EditText
     private lateinit var bSendCode: Button
+    private lateinit var phone: String
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState)
@@ -50,11 +53,20 @@ class SMSDialogFragment : DialogFragment() {
             ft?.addToBackStack(null)
             ft?.commit()
 
-            val intent = Intent(context, RegistrationActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(intent)
+            (activity as SplashActivity).authClient(phone)
+
+//            val intent = Intent(context, RegistrationActivity::class.java)
+//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            startActivity(intent)
+
 
         }
+
+
     }
+    fun setPhone(phone: String){
+        this.phone = phone
+    }
+
 }
