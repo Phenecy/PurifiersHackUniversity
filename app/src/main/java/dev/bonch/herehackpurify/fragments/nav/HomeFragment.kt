@@ -26,6 +26,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeBalance.text = Main.client.balance.toString()
         cardView1.setOnClickListener {
             if(Main.isSetPoint)
             {

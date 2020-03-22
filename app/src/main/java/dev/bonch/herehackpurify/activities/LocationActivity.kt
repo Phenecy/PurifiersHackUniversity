@@ -125,18 +125,6 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         }
     }
 
-    private fun markerToCenter() {
-        val myViewRect = Rect()
-        cardView3.getGlobalVisibleRect(myViewRect);
-        if (m_tap_marker == null) {
-            m_tap_marker = MapScreenMarker(
-                    PointF(myViewRect.exactCenterX(), myViewRect.exactCenterX()),
-                    m_marker_image
-            )
-            map!!.addMapObject(m_tap_marker)
-        }
-    }
-
     /**
      * Initializes HERE Maps and HERE Positioning. Called after permission check.
      */
@@ -361,6 +349,19 @@ class LocationActivity : AppCompatActivity(), OnPositionChangedListener,
         map!!.addMapObject(marker1)
         map!!.addMapObject(marker2)
 
+    }
+
+    private fun markerToCenter() {
+        val myViewRect = Rect()
+        cardView3.getDrawingRect(myViewRect)// getGlobalVisibleRect(myViewRect);
+        if (m_tap_marker == null) {
+
+            m_tap_marker = MapScreenMarker(
+                PointF(myViewRect.exactCenterX(), myViewRect.exactCenterY()),
+                m_marker_image
+            )
+            map!!.addMapObject(m_tap_marker)
+        }
     }
 
     override fun onPositionUpdated(

@@ -237,6 +237,7 @@ public class OrderTakeActivity extends AppCompatActivity {
         );
         Button button = findViewById(R.id.takeOrder);
         button.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), "Заказ принят", Toast.LENGTH_SHORT).show();
             calculateRoute();
         });
     }

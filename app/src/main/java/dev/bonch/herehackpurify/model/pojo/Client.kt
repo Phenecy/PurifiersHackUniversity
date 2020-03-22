@@ -9,7 +9,7 @@ data class Client(
     @SerializedName("phone") val phone : String = "Empty",
     @SerializedName("age") val age : Int = 0,
     @SerializedName("city") val city : String = "Empty",
-    @SerializedName("balance") val balance : Int = 0,
+    @SerializedName("balance") var balance : Int = 1000,
     @SerializedName("trashBinId") val trashBinId : Int = 0,
     @SerializedName("trashPointId") val trashPointId : Int = 0,
     @SerializedName("subscribed") val subscribed : Boolean = false,
