@@ -66,7 +66,7 @@ class SplashActivity : AppCompatActivity() {
 //        }
         setContentView(R.layout.auth_afterload)
 
-        ePhone = findViewById(R.id.user_name_et)
+        ePhone = findViewById(R.id.adress_et)
         bSendSms = findViewById(R.id.sms_send_btn)
 
         bSendSms.setOnClickListener {
