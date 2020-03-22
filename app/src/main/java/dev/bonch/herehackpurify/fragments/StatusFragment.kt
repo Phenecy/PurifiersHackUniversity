@@ -29,13 +29,18 @@ class StatusFragment : Fragment() {
         binBalance.text = Main.client.balance.toString()
         cleareBin.setOnClickListener {
 
-            if (Main.client.balance > 50) {
                 //findNavController().navigate(R.id.action_nav_home_to_binCreateFragment) SEND REQUEST
                 binImage.setImageResource(R.drawable.ic_full_trash)
                 binLayout.setBackgroundColor(resources.getColor(R.color.cloud_main_color))
                 binTextView.text = "Ищем Очистителя"
                 Main.orderList.add(Order2(Main.point, Main.bin, 50))
-                Main.client.balance -= 50
+
+            binBalance.text = Main.client.balance.toString()
+        }
+        buy.setOnClickListener{
+            if (Main.client.balance > 100) {
+                Main.client.balance -= 100
+                Toast.makeText(context, "Вы купили подписку", Toast.LENGTH_LONG).show()
             } else Toast.makeText(context, "Не достаточно средств", Toast.LENGTH_LONG).show()
 
             binBalance.text = Main.client.balance.toString()
